@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -6,7 +6,7 @@
 #define MAX 200
 
 struct _student;
-typedef struct _student* Position;
+typedef struct _student* Position; 
 
 typedef struct _student {
 
@@ -18,82 +18,66 @@ typedef struct _student {
 }Student;
 
 int printList(Position head);
-Position createStudent();
+Position createStudent(char* ime, char* prezime, int godinaRodjenja);
 int insertBeg(Position what, Position where);
 int insertEnd(Position what, Position where);
 Position findElement(char* prezime, Position where);
-int deleteElement(char* prezime, Position where);
+int deleteElement(char* ime, char* prezime, Position where);
 Position findPrev(char* prezime, Position where);
 
 int main(void)
 {
-	Student head;
+	Student head; 
 	head.next = NULL;
 	Position what;
-	int pom;
-	char izbor;
-	char ime[MAX], prezime[MAX];
 
-	printf("Ako zelite izaci iz ovog izbornika unesite: K\n");
-	printf("Ako zelite dodati studenta na kraj liste unesite e\n");
-	printf("Ako zelite dodati studenta na pocetak liste unesite p\n");
-	printf("Ako zalite pronaci studenta unesite f\n");
-	printf("Ako zelite pronaci prethodnog studenta unesite k\n");
-	printf("Ako zelite izbrisat studenta unesite d\n");
-	printf("Za ispis studenta unesite i\n");
 
-	while (1)
-	{
-		scanf("%c", &izbor);
+	char ime[MAX] = { 0 };
+	char prezime[MAX] = { 0 };
+	//int godinaRodjenja = 0;
+	char kraj;
 
-		switch (izbor) {
+	printf("UNOS STUDENATA - unesite 0 ako zelite izaći iz unosa studenata\n");
+	while (1) {
 
-		case 'e':
-			what = createStudent();
-			insertEnd(what, &head);
+	/*	printf("Insert first name:\r\n");
+		scanf(" %s", ime);
+		if (ime[0] == '0')
 			break;
 
-		case 'p':
-			what = createStudent();
-			insertBeg(what, &head);
-			break;
+		printf("Insert last name:\r\n");
+		scanf(" %s", prezime);
 
-		case 'f':
-			printf("Unesite prezime studenta kojeg zelite pronaci: \n");
-			scanf(" %s", prezime);
-			findElement(prezime, &head);
-			break;
-		
-		case 'k':
-			printf("Unesite prezime studenta cijeg prethodnika zelite pronaci: \n");
-			scanf(" %s", prezime);
-			findPrev(prezime,&head);
-			break;
-		
-		case 'd':
-			printf("Unesite prezime studenta kojeg zelite izbrisati: \n");
-			scanf(" %s", prezime);
-			deleteElement(prezime,&head);
-			break;
-		
-		case 'i':
-			printList(&head);
-			break;
-		
-		case 'K':
-			break;
-		
-		default:
-			printf("Krivi odabir!\n");
-			break;
-		}
+		printf("Insert birth year:\r\n");
+		scanf("%d", &godinaRodjenja);
+		*/
+		what = createStudent(); // Dobili smo ono sta zelimo unijeti u listu
+		//insertBeg(what, &head); 
+		insertEnd(what, &head); 
+		printList(&head);
 	}
+
+	// Pronadi Studenta
+	printf("Unesi prezime studenta kojeg trazite: \n");
+	scanf(" %s", prezime);
+	printf("Adresa zeljenog studenta je: %d\n", findElement(prezime, &head));
+
+	//Pronadi prethodnog studenta
+	printf("Adresa studenta prije je: %d\n", findPrev(prezime, &head));
+	
+	//Brisanje nekog studenta
+	printf("Unesi prezime studenta kojeg zelite izbrisati: \n");
+	scanf(" %s", prezime);
+	deleteElement(ime, prezime, &head);
+	
+	//Ispis studenata nakon brisanja
+	printList(&head);
 
 	return 0;
 }
 
 Position createStudent() {  // POSITION NAM JE SAMO TIP VARIJABLE!!!
-							//Ova funkcija samo sluzi za unos u strukturu, a ne u LISTU!!!!
+																		//Ova funkcija samo sluzi za unos u strukturu, a ne u LISTU!!!!
 	Position student = NULL;
 	student = (Position)malloc(sizeof(Student));
 
@@ -111,9 +95,28 @@ Position createStudent() {  // POSITION NAM JE SAMO TIP VARIJABLE!!!
 	printf("Insert birth year:\r\n");
 	scanf("%d", &student->godinaRodjenja);
 
+	//strcpy(student->ime, ime);
+	//strcpy(student->prezime, prezime);
+	//student->godinaRodjenja = godinaRodjenja;
+
 	student->next = NULL;
 
 	return student;
+}
+
+int printList(Position head) {
+	Position p = NULL;
+	p = head->next; // OVO JE KLJUČNO!
+
+	printf("\nList contains:\r\n");
+
+	while (p != NULL) {
+		printf("%s %s %d\n", p->ime, p->prezime, p->godinaRodjenja);
+		p = p->next;
+	}
+
+	printf("\r\n\r\n");
+	return 0;
 }
 
 int insertBeg(Position what, Position where) { //Funkcija koja unosi neki element nakon nekog drugoga!!!
@@ -129,21 +132,6 @@ int insertEnd(Position what, Position where) { // Funkcija koja postavlja neki e
 
 	where->next = what;   //what->next=where->next - mislim da ovo dode na isto
 	what->next = NULL;	// where->next=what
-	return 0;
-}
-
-int printList(Position head) {
-	Position p = NULL;
-	p = head->next; // OVO JE KLJUČNO!
-
-	printf("\nList contains:\r\n");
-
-	while (p != NULL) {
-		printf("%s %s %d\n", p->ime, p->prezime, p->godinaRodjenja);
-		p = p->next;
-	}
-
-	printf("\r\n\r\n");
 	return 0;
 }
 
@@ -168,7 +156,7 @@ Position findPrev(char* prezime, Position where) {
 	return Prev;
 }
 
-int deleteElement(char* prezime, Position where) {
+int deleteElement(char* ime, char* prezime, Position where) {
 
 	Position prev = NULL;
 
